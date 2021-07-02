@@ -1,0 +1,121 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Net Worth Tracker";
+}
+
+
+<asp:UpdatePanel>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <form method="post">
+
+                <input type="hidden" asp-for="FinancialRecord.Id" />
+
+                <div class="form-group">
+                    <label asp-for="FinancialRecord.Type">Record Type</label>
+                    <select asp-for="FinancialRecord.Type" class="custom-select" id="typeSelect">
+                        <option value="Asset">Asset</option>
+                        <option value="Liability">Liability</option>
+                    </select>
+                    <small id="comboBoxHelp" class="form-text text-muted">You must select either an Asset or Liability.</small>
+                    <span class="text-danger" asp-validation-for="FinancialRecord.Type"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="FinancialRecord.Name" for="recordName">Record Name</label>
+                    <input asp-for="FinancialRecord.Name" type="text" class="form-control" id="recordName" placeholder="Record name">
+                    <span class="text-danger" asp-validation-for="FinancialRecord.Name"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="FinancialRecord.Balance" for="recordBalance">Record Balance</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input asp-for="FinancialRecord.Balance" type="text" class="form-control" id="recordBalance" aria-label="Amount (to the nearest dollar)">
+                        <div class="input-group-append">
+                            <span class="input-group-text">.00</span>
+                        </div>
+                    </div>
+                    <span class="text-danger" asp-validation-for="FinancialRecord.Balance"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary" value="Submit">Submit Record</button>
+
+                <span class="text-danger">@Model.Message</span>
+
+                <span class="text-success">@Model.AddedMessage</span>
+            </form>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="card shadow">
+        <div class="card-body">
+
+            <table class="table table-striped">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Net Worth</th>
+                        <th>Assets Total</th>
+                        <th>Liabilities Total</th>
+                    </tr>
+                    <tr>
+                        <td>@Model.NetWorth</td>
+                        <td>@Model.AssetTotal</td>
+                        <td>@Model.LiabilityTotal</td>
+                    </tr>
+                </thead>
+            </table>
+
+            <form method="get">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="search" class="form-control" asp-for="SearchTerm" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary">
+                                Search
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </form>
+
+            <table class="table table-striped">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Balance</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                @if (Model.FinancialRecords != null)
+                {
+                    foreach (var finRecord in Model.FinancialRecords)
+                    {
+                        <tr>
+                            <td>@finRecord.Type</td>
+                            <td>@finRecord.Name</td>
+                            <td>@finRecord.Balance</td>
+                            <td>
+                                <form method="post">
+                                    <button class="btn btn-danger" id="delete" value="Remove"
+                                            asp-page="./Delete"
+                                            asp-route-finRecordId="@finRecord.Id">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+
+        </div>
+    </div>
+
+</asp:UpdatePanel>
+
